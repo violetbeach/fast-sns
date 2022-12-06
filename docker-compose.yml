@@ -5,9 +5,7 @@ services:
     image: mysql:8.0
     platform: linux/x86_64
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: fast_sns
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
       - "8332:3306"
