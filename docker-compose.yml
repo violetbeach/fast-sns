@@ -3,7 +3,6 @@ services:
   sub:
     container_name: fast-sns
     image: mysql:8.0
-    platform: linux/x86_64
     environment:
       MYSQL_DATABASE: fast_sns
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
