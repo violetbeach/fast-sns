@@ -21,13 +21,13 @@ public class MemberWriteService {
     * val member = Member.of(memberRegisterRequest)
     * memberRepository.save(member)
     */
-    public void create(RegisterMemberRequest request) {
+    public Member register(RegisterMemberRequest request) {
         Member member = Member.builder()
                 .nickname(request.nickname())
                 .email(request.email())
                 .birthday(request.birthday())
                 .build();
-        memberRepository.save(member);
+        return memberRepository.save(member);
     }
 
 }
