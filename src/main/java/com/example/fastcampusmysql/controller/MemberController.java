@@ -21,8 +21,14 @@ public class MemberController {
         return memberReadService.toDto(member);
     }
 
-    @GetMapping("/members/{id}")
+    @GetMapping("/{id}")
     public MemberDto findById(@PathVariable long id) {
+        return memberReadService.getMember(id);
+    }
+
+    @PutMapping("/{id}/name")
+    public MemberDto changeNickname(@PathVariable Long id, @RequestBody String nickname) {
+        memberWriteService.changeNickname(id, nickname);
         return memberReadService.getMember(id);
     }
 }
