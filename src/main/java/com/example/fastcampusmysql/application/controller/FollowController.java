@@ -1,6 +1,7 @@
 package com.example.fastcampusmysql.application.controller;
 
 import com.example.fastcampusmysql.application.usecase.CreateFollowMemberUseCase;
+import com.example.fastcampusmysql.application.usecase.GetFollowingMemberUseCase;
 import com.example.fastcampusmysql.domain.member.dto.MemberDto;
 import com.example.fastcampusmysql.domain.member.dto.MemberNicknameHistoryDto;
 import com.example.fastcampusmysql.domain.member.dto.RegisterMemberRequest;
@@ -17,10 +18,16 @@ import java.util.List;
 @RestController
 public class FollowController {
     private final CreateFollowMemberUseCase createFollowMemberUseCase;
+    private final GetFollowingMemberUseCase getFollowingMemberUseCase;
 
     @PostMapping("/{fromId}/{toId}")
     public void create(@PathVariable long fromId, @PathVariable long toId) {
         createFollowMemberUseCase.execute(fromId, toId);
+    }
+
+    @GetMapping("/members/{fromId}")
+    public List<MemberDto> create(@PathVariable long fromId) {
+        return getFollowingMemberUseCase.execute(fromId);
     }
 
 }
