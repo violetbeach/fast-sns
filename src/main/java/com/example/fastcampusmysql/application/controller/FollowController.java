@@ -19,7 +19,7 @@ public class FollowController {
     private final CreateFollowMemberUseCase createFollowMemberUseCase;
 
     @PostMapping("/{fromId}/{toId}")
-    public void register(@PathVariable long fromId, @PathVariable long toId) {
+    public void create(@PathVariable long fromId, @PathVariable long toId) {
         createFollowMemberUseCase.execute(fromId, toId);
     }
 
