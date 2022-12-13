@@ -20,7 +20,7 @@ import java.util.List;
 @Repository
 public class FollowRepository {
 
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final String TABLE = "follow";
 
     private static final RowMapper<Follow> ROW_MAPPER = (ResultSet resultSet, int rowNum) -> Follow.builder()
