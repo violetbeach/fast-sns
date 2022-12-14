@@ -47,6 +47,19 @@ public class PostRepository {
         throw new UnsupportedOperationException("PostRepository now allow update.");
     }
 
+    public void bulkInsert(List<Post> posts) {
+        var sql = String.format("""
+                INSERT INTO '%s' (memberId, contents, createdDate, createdAt)
+                VALUES (:memberId, :contents, :createdDate, :createdAt)
+                """, TABLE);
+
+        SqlParameterSource[] params = posts
+                .stream()
+                .map(BeanPropertySqlParameterSource::new)
+                .toArray(SqlParameterSource[]::new);
+        namedParameterJdbcTemplate.batchUpdate(sql, params);
+    }
+
     private Post insert(Post post) {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(namedParameterJdbcTemplate.getJdbcTemplate())
                 .withTableName(TABLE)
