@@ -2,7 +2,10 @@ package com.example.fastcampusmysql.domain.post.service;
 
 import com.example.fastcampusmysql.domain.post.dto.DailyPostCount;
 import com.example.fastcampusmysql.domain.post.dto.DailyPostCountRequest;
+import com.example.fastcampusmysql.domain.post.entity.Post;
 import com.example.fastcampusmysql.domain.post.repository.PostRepository;
+import com.example.fastcampusmysql.util.CursorRequest;
+import com.example.fastcampusmysql.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,5 +18,21 @@ public class PostReadService {
 
     public List<DailyPostCount> getDailyPostCounts(DailyPostCountRequest request) {
         return postRepository.groupByCreatedDate(request);
+    }
+
+    public PageCursor<Post> getPosts(Long memberId, CursorRequest cursorRequest) {
+        var posts = findAllBy(memberId, cursorRequest);
+        var nextKey = posts.stream()
+                .mapToLong(Post::getId)
+                .min()
+                .orElse(CursorRequest.NONE_KEY);
+        return new PageCursor<>(cursorRequest.next(nextKey), posts);
+    }
+
+    private List<Post> findAllBy(Long memberId, CursorRequest cursorRequest) {
+        if(cursorRequest.hasKey()) {
+            return postRepository.findAllByLessThanIdAndMemberIdAndOrderByIdDesc(cursorRequest.key(), memberId, cursorRequest.size());
+        }
+        return postRepository.findAllByMemberIdAndOrderByIdDesc(memberId, cursorRequest.size());
     }
 }
