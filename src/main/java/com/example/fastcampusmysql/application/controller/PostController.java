@@ -1,13 +1,18 @@
 package com.example.fastcampusmysql.application.controller;
 
+import com.example.fastcampusmysql.application.usecase.GetTimelinePostUseCase;
 import com.example.fastcampusmysql.domain.post.dto.DailyPostCount;
 import com.example.fastcampusmysql.domain.post.dto.DailyPostCountRequest;
 import com.example.fastcampusmysql.domain.post.dto.PostRequest;
+import com.example.fastcampusmysql.domain.post.entity.Post;
 import com.example.fastcampusmysql.domain.post.service.PostReadService;
 import com.example.fastcampusmysql.domain.post.service.PostWriteService;
+import com.example.fastcampusmysql.util.CursorRequest;
+import com.example.fastcampusmysql.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.*;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -17,6 +22,8 @@ public class PostController {
     private final PostWriteService postWriteService;
     private final PostReadService postReadService;
 
+    private final GetTimelinePostUseCase getTimelinePostUseCase;
+
     @PostMapping
     public Long create(PostRequest request) {
         return postWriteService.create(request);
@@ -25,5 +32,13 @@ public class PostController {
     @GetMapping("/daily-post-counts")
     public List<DailyPostCount> getDailyPostCounts(@RequestBody DailyPostCountRequest request) {
         return postReadService.getDailyPostCounts(request);
+    }
+
+    @GetMapping("members/{memberId}")
+    public PageCursor<Post> getPosts(
+            @PathVariable Long memberId,
+            CursorRequest cursorRequest
+    ) {
+        return postReadService.getPosts(memberId, cursorRequest);
     }
 }

@@ -50,7 +50,7 @@ public class PostRepository {
         return namedParameterJdbcTemplate.query(sql, params, DAILY_POST_COUNT_MAPPER);
     }
 
-    public List<Post> findAllByMemberIdAndOrderByIdDesc(long memberId, int size) {
+    public List<Post> findAllByInMemberIdsAndOrderByIdDesc(long memberId, int size) {
         var sql = String.format("""
                 SELECT *
                 FROM %s
@@ -65,7 +65,44 @@ public class PostRepository {
         return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
     }
 
-    public List<Post> findAllByLessThanIdAndMemberIdAndOrderByIdDesc(long id, long memberId, int size) {
+    public List<Post> findAllByInMemberIdsAndOrderByIdDesc(List<Long> memberIds, int size) {
+        if(memberIds.isEmpty()) {
+            return List.of();
+        }
+        var sql = String.format("""
+                SELECT *
+                FROM %s
+                WHERE memberId in (:memberIds)
+                ORDER BY id desc
+                LIMIT :size
+                """, TABLE);
+        var params = new MapSqlParameterSource()
+                .addValue("memberIds", memberIds)
+                .addValue("size", size)
+                ;
+        return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
+    }
+
+    public List<Post> findAllByLessThanIdAndMemberIdsAndOrderByIdDesc(long id, List<Long> memberIds, int size) {
+        if(memberIds.isEmpty()) {
+            return List.of();
+        }
+        var sql = String.format("""
+                SELECT *
+                FROM %s
+                WHERE memberId in (:memberIds) AND id < :id
+                ORDER BY id desc
+                LIMIT :size
+                """, TABLE);
+        var params = new MapSqlParameterSource()
+                .addValue("memberIds", memberIds)
+                .addValue("id", id)
+                .addValue("size", size)
+                ;
+        return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
+    }
+
+    public List<Post> findAllByLessThanIdAndMemberIdsAndOrderByIdDesc(long id, long memberId, int size) {
         var sql = String.format("""
                 SELECT *
                 FROM %s
