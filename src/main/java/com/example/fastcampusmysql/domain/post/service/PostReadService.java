@@ -40,16 +40,20 @@ public class PostReadService {
         return nextKey;
     }
 
+    public List<Post>getPosts(List<Long> ids) {
+        return postRepository.findAllByInId(ids);
+    }
+
     private List<Post> findAllBy(Long memberId, CursorRequest cursorRequest) {
         if(cursorRequest.hasKey()) {
-            return postRepository.findAllByLessThanIdAndMemberIdsAndOrderByIdDesc(cursorRequest.key(), memberId, cursorRequest.size());
+            return postRepository.findAllByLessThanIdAndMemberIdAndOrderByIdDesc(cursorRequest.key(), memberId, cursorRequest.size());
         }
-        return postRepository.findAllByInMemberIdsAndOrderByIdDesc(memberId, cursorRequest.size());
+        return postRepository.findAllByMemberIdAndOrderByIdDesc(memberId, cursorRequest.size());
     }
 
     private List<Post> findAllBy(List<Long> memberIds, CursorRequest cursorRequest) {
         if(cursorRequest.hasKey()) {
-            return postRepository.findAllByLessThanIdAndMemberIdsAndOrderByIdDesc(cursorRequest.key(), memberIds, cursorRequest.size());
+            return postRepository.findAllByLessThanIdAndInMemberIdsAndOrderByIdDesc(cursorRequest.key(), memberIds, cursorRequest.size());
         }
         return postRepository.findAllByInMemberIdsAndOrderByIdDesc(memberIds, cursorRequest.size());
     }
