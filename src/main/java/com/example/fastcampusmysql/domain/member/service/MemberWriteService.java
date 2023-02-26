@@ -7,6 +7,7 @@ import com.example.fastcampusmysql.domain.member.repository.MemberNicknameHistor
 import com.example.fastcampusmysql.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -24,6 +25,7 @@ public class MemberWriteService {
     * val member = Member.of(memberRegisterRequest)
     * memberRepository.save(member)
     */
+    @Transactional
     public Member register(RegisterMemberRequest request) {
         Member member = Member.builder()
                 .nickname(request.nickname())
