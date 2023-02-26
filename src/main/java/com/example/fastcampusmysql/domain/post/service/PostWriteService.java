@@ -20,5 +20,9 @@ public class PostWriteService {
         return postRepository.save(post).getId();
     }
 
-
+    public void likePost(Long postId) {
+        var post = postRepository.findById(postId).orElseThrow();
+        post.incrementLikeCount();
+        postRepository.update(post);
+    }
 }

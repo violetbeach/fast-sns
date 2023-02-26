@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
@@ -31,6 +32,7 @@ public class PostRepository {
             .contents(resultSet.getString("contents"))
             .createdDate(resultSet.getObject("createdDate", LocalDate.class))
             .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
+            .likeCount(resultSet.getLong("likeCount"))
             .build();
     private static final RowMapper<DailyPostCount> DAILY_POST_COUNT_MAPPER = (ResultSet resultSet, int rowNum) -> new DailyPostCount(
             resultSet.getLong("memberId"),
@@ -134,6 +136,13 @@ public class PostRepository {
         return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
     }
 
+    public Optional<Post> findById(Long postId) {
+        var sql = String.format("SELECT * FROM %s WHERE id = :postId ", TABLE);
+        var params = new MapSqlParameterSource().addValue("postId", postId);
+        var nullablePost = namedParameterJdbcTemplate.queryForObject(sql, params, ROW_MAPPER);
+        return Optional.ofNullable(nullablePost);
+    }
+
     public Post save(Post post) {
         if(post.getId() == null)
             return insert(post);
@@ -169,6 +178,20 @@ public class PostRepository {
                 .createdDate(post.getCreatedDate())
                 .createdAt(post.getCreatedAt())
                 .build();
+    }
+
+    public Post update(Post post) {
+        var sql = String.format("""
+                UPDATE %s set
+                    memberId = :memberId,
+                    contents = :contents,
+                    createdDate = :createdDate,
+                    createdAt = :createdAt
+                WHERE id = :id
+                """, TABLE);
+        SqlParameterSource params = new BeanPropertySqlParameterSource(post);
+        namedParameterJdbcTemplate.update(sql, params);
+        return post;
     }
 
 }

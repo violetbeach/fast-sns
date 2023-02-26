@@ -24,6 +24,7 @@ public class PostController {
 
     private final GetTimelinePostUseCase getTimelinePostUseCase;
     private final CreatePostUseCase createPostUseCase;
+    private final PostWriteService postWriteService;
 
     @PostMapping
     public Long create(PostRequest request) {
@@ -49,5 +50,10 @@ public class PostController {
             CursorRequest cursorRequest
     ) {
         return getTimelinePostUseCase.executeByTimeline(memberId, cursorRequest);
+    }
+
+    @PostMapping("/{postId}/like")
+    public void likePost(@PathVariable Long postId) {
+        postWriteService.likePost(postId);
     }
 }

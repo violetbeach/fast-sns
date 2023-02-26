@@ -50,6 +50,8 @@ create index POST__index_member_id
 create index POST__index_created_date
     on POST (createdDate);
 
+alter table add column likeCount int;
+
 create table Timeline
 {
     id int auto_increment,
