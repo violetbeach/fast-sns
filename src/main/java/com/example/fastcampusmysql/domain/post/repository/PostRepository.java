@@ -136,8 +136,11 @@ public class PostRepository {
         return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
     }
 
-    public Optional<Post> findById(Long postId) {
+    public Optional<Post> findById(Long postId, boolean requiredLock) {
         var sql = String.format("SELECT * FROM %s WHERE id = :postId ", TABLE);
+        if(requiredLock) {
+            sql += "FOR UPDATE";
+        }
         var params = new MapSqlParameterSource().addValue("postId", postId);
         var nullablePost = namedParameterJdbcTemplate.queryForObject(sql, params, ROW_MAPPER);
         return Optional.ofNullable(nullablePost);
