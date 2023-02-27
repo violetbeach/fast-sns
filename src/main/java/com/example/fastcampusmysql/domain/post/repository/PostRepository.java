@@ -189,11 +189,16 @@ public class PostRepository {
                     memberId = :memberId,
                     contents = :contents,
                     createdDate = :createdDate,
-                    createdAt = :createdAt
-                WHERE id = :id
+                    createdAt = :createdAt,
+                    version = :version + 1
+                WHERE id = :id and version: = :version
                 """, TABLE);
         SqlParameterSource params = new BeanPropertySqlParameterSource(post);
-        namedParameterJdbcTemplate.update(sql, params);
+        var updatedCount = namedParameterJdbcTemplate.update(sql, params);
+
+        if (updatedCount == 0) {
+            throw new RuntimeException("갱신 실패");
+        }
         return post;
     }
 
