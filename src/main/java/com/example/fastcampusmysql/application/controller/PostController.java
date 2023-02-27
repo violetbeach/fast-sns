@@ -1,9 +1,11 @@
 package com.example.fastcampusmysql.application.controller;
 
+import com.example.fastcampusmysql.application.usecase.CreatePostLikeUseCase;
 import com.example.fastcampusmysql.application.usecase.CreatePostUseCase;
 import com.example.fastcampusmysql.application.usecase.GetTimelinePostUseCase;
 import com.example.fastcampusmysql.domain.post.dto.DailyPostCount;
 import com.example.fastcampusmysql.domain.post.dto.DailyPostCountRequest;
+import com.example.fastcampusmysql.domain.post.dto.PostDto;
 import com.example.fastcampusmysql.domain.post.dto.PostRequest;
 import com.example.fastcampusmysql.domain.post.entity.Post;
 import com.example.fastcampusmysql.domain.post.service.PostReadService;
@@ -26,6 +28,8 @@ public class PostController {
     private final CreatePostUseCase createPostUseCase;
     private final PostWriteService postWriteService;
 
+    private final CreatePostLikeUseCase createPostLikeUseCase;
+
     @PostMapping
     public Long create(PostRequest request) {
         return createPostUseCase.execute(request);
@@ -37,7 +41,7 @@ public class PostController {
     }
 
     @GetMapping("members/{memberId}")
-    public PageCursor<Post> getPosts(
+    public PageCursor<PostDto> getPosts(
             @PathVariable Long memberId,
             CursorRequest cursorRequest
     ) {
@@ -55,5 +59,10 @@ public class PostController {
     @PostMapping("/{postId}/like")
     public void likePost(@PathVariable Long postId) {
         postWriteService.likePost(postId);
+    }
+
+    @PostMapping("/{postId}/like/v2")
+    public void likePostV2(@PathVariable Long postId, @RequestParam Long memberId) {
+        createPostLikeUseCase.execute(postId, memberId );
     }
 }
